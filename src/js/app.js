@@ -112,7 +112,18 @@ class AppController {
                         console.log('[AppController] 音声合成サービス再初期化完了');
                     } catch (error) {
                         console.error('[AppController] サービス再初期化エラー:', error);
-                        window.uiManager.showAlert(`サービス再初期化エラー: ${error.message}`, 'error');
+                        
+                        // エラー発生時は両方のサービスをクリーンアップして、接続状態をリセット
+                        window.speechRecognitionService.cleanup();
+                        window.speechSynthesisService.cleanup();
+                        window.stateManager.setConnected(false);
+                        window.uiManager.updateStatus('再初期化エラー', 'red');
+                        window.uiManager.updateButton(false, false);
+                        
+                        window.uiManager.showAlert(
+                            `サービス再初期化エラー: ${error.message}\n設定を確認して再度保存してください。`,
+                            'error'
+                        );
                     }
                 }
             }
