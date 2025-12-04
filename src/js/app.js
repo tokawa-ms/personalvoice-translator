@@ -110,21 +110,8 @@ class AppController {
             }
         });
         
-        // モーダル外クリックで閉じる機能を削除（保存ボタンを押すまで閉じないようにする）
-        // window.uiManager.elements.settingsModal.addEventListener('click', (e) => {
-        //     if (e.target === window.uiManager.elements.settingsModal) {
-        //         console.log('[AppController] モーダル外クリック');
-        //         window.uiManager.hideSettingsModal();
-        //     }
-        // });
-        
-        // Escキーでモーダルを閉じる機能を削除（保存ボタンを押すまで閉じないようにする）
-        // document.addEventListener('keydown', (e) => {
-        //     if (e.key === 'Escape' && !window.uiManager.elements.settingsModal.classList.contains('hidden')) {
-        //         console.log('[AppController] Escキー押下');
-        //         window.uiManager.hideSettingsModal();
-        //     }
-        // });
+        // 注: モーダル外クリックやEscキーでモーダルを閉じる機能は削除しました
+        // ユーザーは「保存」ボタンまたは「×閉じる」ボタンを明示的にクリックする必要があります
         
         console.log('[AppController] イベントリスナー設定完了');
     }
