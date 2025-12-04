@@ -110,8 +110,11 @@ class AppController {
             }
         });
         
-        // 注: モーダル外クリックやEscキーでモーダルを閉じる機能は削除しました
-        // ユーザーは「保存」ボタンまたは「×閉じる」ボタンを明示的にクリックする必要があります
+        /**
+         * Note: Modal outside-click and Escape key handlers were removed.
+         * Users must explicitly click the "Save" or "Close" button to dismiss the settings modal.
+         * This prevents accidental loss of unsaved settings.
+         */
         
         console.log('[AppController] イベントリスナー設定完了');
     }
