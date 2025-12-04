@@ -37,14 +37,14 @@ class SpeechSynthesisService {
                 settings.serviceRegion
             );
 
-            // 音声名を設定
-            if (settings.voiceName) {
-                speechConfig.speechSynthesisVoiceName = settings.voiceName;
-                console.log('[SpeechSynthesis] 音声名:', settings.voiceName);
-            }
+            // 翻訳先言語に基づいて適切な音声名を設定
+            const voiceName = this.getVoiceNameForLanguage(settings.targetLanguage, settings.voiceName);
+            speechConfig.speechSynthesisVoiceName = voiceName;
+            console.log('[SpeechSynthesis] 音声名:', voiceName);
+            console.log('[SpeechSynthesis] 対象言語:', settings.targetLanguage);
 
             // Personal Voice ID が設定されている場合
-            if (settings.personalVoiceId) {
+            if (settings.personalVoiceId && settings.personalVoiceId.trim() !== '') {
                 console.log('[SpeechSynthesis] Personal Voice ID:', settings.personalVoiceId);
                 // Personal Voice の設定（プロパティとして追加）
                 speechConfig.setProperty(
@@ -151,27 +151,38 @@ class SpeechSynthesisService {
                 return;
             }
 
-            return new Promise((resolve, reject) => {
-                this.synthesizer.speakTextAsync(
-                    text,
-                    (result) => {
-                        if (result.reason === SpeechSDK.ResultReason.SynthesizingAudioCompleted) {
-                            console.log('[SpeechSynthesis] 音声合成成功');
-                            resolve();
-                            
-                            // キューに次の項目があれば処理
-                            this.processQueue();
-                        } else {
-                            console.error('[SpeechSynthesis] 合成失敗:', result.reason);
-                            reject(new Error(`音声合成失敗: ${result.reason}`));
+            // 設定を取得
+            const settings = window.stateManager.getState('settings');
+            
+            // Personal Voice が設定されている場合は SSML を使用
+            if (settings && settings.personalVoiceId && settings.personalVoiceId.trim() !== '') {
+                console.log('[SpeechSynthesis] Personal Voice を使用して SSML で合成');
+                const ssml = this.generateSSML(text, settings);
+                return await this.synthesizeSSML(ssml);
+            } else {
+                console.log('[SpeechSynthesis] 標準音声で合成');
+                return new Promise((resolve, reject) => {
+                    this.synthesizer.speakTextAsync(
+                        text,
+                        (result) => {
+                            if (result.reason === SpeechSDK.ResultReason.SynthesizingAudioCompleted) {
+                                console.log('[SpeechSynthesis] 音声合成成功');
+                                resolve();
+                                
+                                // キューに次の項目があれば処理
+                                this.processQueue();
+                            } else {
+                                console.error('[SpeechSynthesis] 合成失敗:', result.reason);
+                                reject(new Error(`音声合成失敗: ${result.reason}`));
+                            }
+                        },
+                        (error) => {
+                            console.error('[SpeechSynthesis] 合成エラー:', error);
+                            reject(error);
                         }
-                    },
-                    (error) => {
-                        console.error('[SpeechSynthesis] 合成エラー:', error);
-                        reject(error);
-                    }
-                );
-            });
+                    );
+                });
+            }
 
         } catch (error) {
             console.error('[SpeechSynthesis] 合成エラー:', error);
@@ -237,13 +248,14 @@ class SpeechSynthesisService {
      * @returns {string} SSML
      */
     generateSSML(text, settings) {
-        const voiceName = settings.voiceName || 'ja-JP-NanamiNeural';
+        // 翻訳先言語に基づいて音声名を決定
+        const voiceName = this.getVoiceNameForLanguage(settings.targetLanguage, settings.voiceName);
         
         let ssml = `<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xml:lang="${settings.targetLanguage}">`;
         ssml += `<voice name="${voiceName}">`;
         
         // Personal Voice の場合は追加の属性
-        if (settings.personalVoiceId) {
+        if (settings.personalVoiceId && settings.personalVoiceId.trim() !== '') {
             ssml = `<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="https://www.w3.org/2001/mstts" xml:lang="${settings.targetLanguage}">`;
             ssml += `<voice name="${voiceName}">`;
             ssml += `<mstts:ttsembedding speakerProfileId="${settings.personalVoiceId}">`;
@@ -258,6 +270,43 @@ class SpeechSynthesisService {
         
         console.log('[SpeechSynthesis] 生成されたSSML:', ssml);
         return ssml;
+    }
+
+    /**
+     * 言語コードに基づいて適切な音声名を取得
+     * @param {string} targetLanguage - 翻訳先言語コード（例: 'en-US', 'ja-JP'）
+     * @param {string} customVoiceName - ユーザーが設定したカスタム音声名（オプション）
+     * @returns {string} 音声名
+     */
+    getVoiceNameForLanguage(targetLanguage, customVoiceName) {
+        console.log('[SpeechSynthesis] 音声名を取得:', targetLanguage, customVoiceName);
+        
+        // カスタム音声名が設定されていて、その音声名が対象言語と一致する場合は使用
+        if (customVoiceName && customVoiceName.trim() !== '') {
+            // 音声名が対象言語コードで始まる場合はそのまま使用
+            if (customVoiceName.startsWith(targetLanguage)) {
+                console.log('[SpeechSynthesis] カスタム音声名を使用:', customVoiceName);
+                return customVoiceName;
+            }
+        }
+        
+        // 言語コードに基づいてデフォルト音声を選択
+        const voiceMap = {
+            'ja-JP': 'ja-JP-NanamiNeural',
+            'en-US': 'en-US-JennyNeural',
+            'zh-CN': 'zh-CN-XiaoxiaoNeural',
+            'ko-KR': 'ko-KR-SunHiNeural',
+            'es-ES': 'es-ES-ElviraNeural',
+            'fr-FR': 'fr-FR-DeniseNeural',
+            'de-DE': 'de-DE-KatjaNeural',
+            'it-IT': 'it-IT-ElsaNeural',
+            'pt-BR': 'pt-BR-FranciscaNeural',
+            'ru-RU': 'ru-RU-SvetlanaNeural'
+        };
+        
+        const selectedVoice = voiceMap[targetLanguage] || 'en-US-JennyNeural';
+        console.log('[SpeechSynthesis] デフォルト音声を選択:', selectedVoice);
+        return selectedVoice;
     }
 
     /**

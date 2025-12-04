@@ -89,31 +89,42 @@ class AppController {
         });
         
         // 翻訳先言語の変更
-        window.uiManager.elements.targetLanguage.addEventListener('change', (e) => {
+        window.uiManager.elements.targetLanguage.addEventListener('change', async (e) => {
             console.log('[AppController] 翻訳先言語変更:', e.target.value);
             const settings = window.stateManager.getState('settings');
             if (settings) {
                 settings.targetLanguage = e.target.value;
                 window.storageManager.updateSetting('targetLanguage', e.target.value);
                 window.stateManager.updateSettings(settings);
+                
+                // 音声合成サービスを再初期化して、新しい言語の音声を使用
+                if (window.stateManager.getState('isConnected')) {
+                    console.log('[AppController] 翻訳先言語変更により音声合成サービスを再初期化');
+                    try {
+                        await window.speechSynthesisService.initialize(settings);
+                        console.log('[AppController] 音声合成サービス再初期化完了');
+                    } catch (error) {
+                        console.error('[AppController] 音声合成サービス再初期化エラー:', error);
+                    }
+                }
             }
         });
         
-        // モーダル外クリックで閉じる
-        window.uiManager.elements.settingsModal.addEventListener('click', (e) => {
-            if (e.target === window.uiManager.elements.settingsModal) {
-                console.log('[AppController] モーダル外クリック');
-                window.uiManager.hideSettingsModal();
-            }
-        });
+        // モーダル外クリックで閉じる機能を削除（保存ボタンを押すまで閉じないようにする）
+        // window.uiManager.elements.settingsModal.addEventListener('click', (e) => {
+        //     if (e.target === window.uiManager.elements.settingsModal) {
+        //         console.log('[AppController] モーダル外クリック');
+        //         window.uiManager.hideSettingsModal();
+        //     }
+        // });
         
-        // Escキーでモーダルを閉じる
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && !window.uiManager.elements.settingsModal.classList.contains('hidden')) {
-                console.log('[AppController] Escキー押下');
-                window.uiManager.hideSettingsModal();
-            }
-        });
+        // Escキーでモーダルを閉じる機能を削除（保存ボタンを押すまで閉じないようにする）
+        // document.addEventListener('keydown', (e) => {
+        //     if (e.key === 'Escape' && !window.uiManager.elements.settingsModal.classList.contains('hidden')) {
+        //         console.log('[AppController] Escキー押下');
+        //         window.uiManager.hideSettingsModal();
+        //     }
+        // });
         
         console.log('[AppController] イベントリスナー設定完了');
     }
