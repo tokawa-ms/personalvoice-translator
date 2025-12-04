@@ -76,6 +76,9 @@ class SpeechSynthesisService {
                 console.log('[SpeechSynthesis] Personal Voice モード - ベース音声を使用:', voiceName);
                 console.log('[SpeechSynthesis] Personal Voice ID:', settings.personalVoiceId);
                 console.log('[SpeechSynthesis] Personal Voice は多言語対応のため、言語に依存しません');
+                
+                // 注意: Personal Voice の speakerProfileId は SSML の mstts:ttsembedding タグで指定します
+                // speechConfig.setProperty での設定は不要です（generateSSML メソッドで処理）
             } else {
                 // 標準音声の場合は、翻訳先言語に基づいて適切な音声名を設定
                 voiceName = this.getVoiceNameForLanguage(settings.targetLanguage, settings.voiceName);
