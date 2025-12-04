@@ -16,6 +16,9 @@ class SpeechSynthesisService {
         // Personal Voice (カスタム音声) 用のベース音声
         // Personal Voice は多言語対応のため、言語に依存しないベース音声を使用
         // DragonLatestNeural が Personal Voice の推奨ベース音声
+        // - Azure が Personal Voice 用に推奨する最新のベース音声
+        // - Personal Voice の ttsembedding 機能に最適化されている
+        // - 多言語対応で話者特性を最も自然に反映
         this.PERSONAL_VOICE_BASE = 'DragonLatestNeural';
         
         // 言語コードから音声名へのマッピング
@@ -79,6 +82,7 @@ class SpeechSynthesisService {
                 console.log('[SpeechSynthesis] Personal Voice は多言語対応のため、言語に依存しません');
                 
                 // 注意: Personal Voice の speakerProfileId は SSML の mstts:ttsembedding タグで指定します
+                // この方法により、ベース音声に話者特性を動的に適用できます
                 // speechConfig.setProperty での設定は不要です（generateSSML メソッドで処理）
             } else {
                 // 標準音声の場合は、翻訳先言語に基づいて適切な音声名を設定
@@ -288,8 +292,10 @@ class SpeechSynthesisService {
         // Personal Voice が設定されている場合は、
         // 言語に関係なく Personal Voice 用のベース音声を使用
         // Personal Voice は多言語対応のため、話者特性が適用される
+        const isPersonalVoice = this.hasValidPersonalVoiceId(settings);
         let voiceName;
-        if (this.hasValidPersonalVoiceId(settings)) {
+        
+        if (isPersonalVoice) {
             voiceName = this.PERSONAL_VOICE_BASE;
             console.log('[SpeechSynthesis] Personal Voice 用 SSML - ベース音声:', voiceName);
         } else {
@@ -298,13 +304,16 @@ class SpeechSynthesisService {
             console.log('[SpeechSynthesis] 標準音声用 SSML - 音声名:', voiceName);
         }
         
-        let ssml = `<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xml:lang="${settings.targetLanguage}">`;
+        // SSML を構築（Personal Voice の場合は mstts 名前空間を追加）
+        const xmlns = isPersonalVoice 
+            ? 'xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="https://www.w3.org/2001/mstts"'
+            : 'xmlns="http://www.w3.org/2001/10/synthesis"';
+        
+        let ssml = `<speak version="1.0" ${xmlns} xml:lang="${settings.targetLanguage}">`;
         ssml += `<voice name="${voiceName}">`;
         
-        // Personal Voice の場合は mstts:ttsembedding タグを使用
-        if (this.hasValidPersonalVoiceId(settings)) {
-            ssml = `<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="https://www.w3.org/2001/mstts" xml:lang="${settings.targetLanguage}">`;
-            ssml += `<voice name="${voiceName}">`;
+        // Personal Voice の場合は mstts:ttsembedding タグでテキストを囲む
+        if (isPersonalVoice) {
             ssml += `<mstts:ttsembedding speakerProfileId="${settings.personalVoiceId}">`;
             ssml += this.escapeXml(text);
             ssml += `</mstts:ttsembedding>`;
