@@ -9,6 +9,18 @@ class SpeechSynthesisService {
         this.synthesizer = null;
         this.isSynthesizing = false;
         this.audioQueue = [];
+        
+        // デフォルトのフォールバック音声
+        this.DEFAULT_VOICE = 'en-US-JennyNeural';
+    }
+
+    /**
+     * Personal Voice ID が有効かチェック
+     * @param {Object} settings - 設定オブジェクト
+     * @returns {boolean} Personal Voice ID が有効な場合 true
+     */
+    hasValidPersonalVoiceId(settings) {
+        return settings && settings.personalVoiceId && settings.personalVoiceId.trim() !== '';
     }
 
     /**
@@ -44,7 +56,7 @@ class SpeechSynthesisService {
             console.log('[SpeechSynthesis] 対象言語:', settings.targetLanguage);
 
             // Personal Voice ID が設定されている場合
-            if (settings.personalVoiceId && settings.personalVoiceId.trim() !== '') {
+            if (this.hasValidPersonalVoiceId(settings)) {
                 console.log('[SpeechSynthesis] Personal Voice ID:', settings.personalVoiceId);
                 // Personal Voice の設定（プロパティとして追加）
                 speechConfig.setProperty(
@@ -155,7 +167,7 @@ class SpeechSynthesisService {
             const settings = window.stateManager.getState('settings');
             
             // Personal Voice が設定されている場合は SSML を使用
-            if (settings && settings.personalVoiceId && settings.personalVoiceId.trim() !== '') {
+            if (this.hasValidPersonalVoiceId(settings)) {
                 console.log('[SpeechSynthesis] Personal Voice を使用して SSML で合成');
                 const ssml = this.generateSSML(text, settings);
                 return await this.synthesizeSSML(ssml);
@@ -255,7 +267,7 @@ class SpeechSynthesisService {
         ssml += `<voice name="${voiceName}">`;
         
         // Personal Voice の場合は追加の属性
-        if (settings.personalVoiceId && settings.personalVoiceId.trim() !== '') {
+        if (this.hasValidPersonalVoiceId(settings)) {
             ssml = `<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="https://www.w3.org/2001/mstts" xml:lang="${settings.targetLanguage}">`;
             ssml += `<voice name="${voiceName}">`;
             ssml += `<mstts:ttsembedding speakerProfileId="${settings.personalVoiceId}">`;
@@ -304,7 +316,7 @@ class SpeechSynthesisService {
             'ru-RU': 'ru-RU-SvetlanaNeural'
         };
         
-        const selectedVoice = voiceMap[targetLanguage] || 'en-US-JennyNeural';
+        const selectedVoice = voiceMap[targetLanguage] || this.DEFAULT_VOICE;
         console.log('[SpeechSynthesis] デフォルト音声を選択:', selectedVoice);
         return selectedVoice;
     }
