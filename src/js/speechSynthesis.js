@@ -13,6 +13,10 @@ class SpeechSynthesisService {
         // デフォルトのフォールバック音声
         this.DEFAULT_VOICE = 'en-US-JennyNeural';
         
+        // Personal Voice (カスタム音声) 用のベース音声
+        // Personal Voice は多言語対応のため、言語に依存しないベース音声を使用
+        this.PERSONAL_VOICE_BASE = 'en-US-AvaMultilingualNeural';
+        
         // 言語コードから音声名へのマッピング
         this.VOICE_MAP = {
             'ja-JP': 'ja-JP-NanamiNeural',
@@ -63,21 +67,24 @@ class SpeechSynthesisService {
                 settings.serviceRegion
             );
 
-            // 翻訳先言語に基づいて適切な音声名を設定
-            const voiceName = this.getVoiceNameForLanguage(settings.targetLanguage, settings.voiceName);
+            // Personal Voice (カスタム音声) が設定されている場合は、
+            // 言語に関係なく Personal Voice 用のベース音声を使用
+            // Personal Voice は多言語対応のため、ベース音声に話者特性が適用される
+            let voiceName;
+            if (this.hasValidPersonalVoiceId(settings)) {
+                voiceName = this.PERSONAL_VOICE_BASE;
+                console.log('[SpeechSynthesis] Personal Voice モード - ベース音声を使用:', voiceName);
+                console.log('[SpeechSynthesis] Personal Voice ID:', settings.personalVoiceId);
+                console.log('[SpeechSynthesis] Personal Voice は多言語対応のため、言語に依存しません');
+            } else {
+                // 標準音声の場合は、翻訳先言語に基づいて適切な音声名を設定
+                voiceName = this.getVoiceNameForLanguage(settings.targetLanguage, settings.voiceName);
+                console.log('[SpeechSynthesis] 標準音声モード');
+            }
+            
             speechConfig.speechSynthesisVoiceName = voiceName;
             console.log('[SpeechSynthesis] 音声名:', voiceName);
             console.log('[SpeechSynthesis] 対象言語:', settings.targetLanguage);
-
-            // Personal Voice ID が設定されている場合
-            if (this.hasValidPersonalVoiceId(settings)) {
-                console.log('[SpeechSynthesis] Personal Voice ID:', settings.personalVoiceId);
-                // Personal Voice の設定（プロパティとして追加）
-                speechConfig.setProperty(
-                    'SpeechSynthesis_PersonalVoiceId',
-                    settings.personalVoiceId
-                );
-            }
 
             // 音質の設定
             speechConfig.speechSynthesisOutputFormat = 
@@ -274,13 +281,23 @@ class SpeechSynthesisService {
      * @returns {string} SSML
      */
     generateSSML(text, settings) {
-        // 翻訳先言語に基づいて音声名を決定
-        const voiceName = this.getVoiceNameForLanguage(settings.targetLanguage, settings.voiceName);
+        // Personal Voice が設定されている場合は、
+        // 言語に関係なく Personal Voice 用のベース音声を使用
+        // Personal Voice は多言語対応のため、話者特性が適用される
+        let voiceName;
+        if (this.hasValidPersonalVoiceId(settings)) {
+            voiceName = this.PERSONAL_VOICE_BASE;
+            console.log('[SpeechSynthesis] Personal Voice 用 SSML - ベース音声:', voiceName);
+        } else {
+            // 標準音声の場合は翻訳先言語に基づいて音声名を決定
+            voiceName = this.getVoiceNameForLanguage(settings.targetLanguage, settings.voiceName);
+            console.log('[SpeechSynthesis] 標準音声用 SSML - 音声名:', voiceName);
+        }
         
         let ssml = `<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xml:lang="${settings.targetLanguage}">`;
         ssml += `<voice name="${voiceName}">`;
         
-        // Personal Voice の場合は追加の属性
+        // Personal Voice の場合は mstts:ttsembedding タグを使用
         if (this.hasValidPersonalVoiceId(settings)) {
             ssml = `<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="https://www.w3.org/2001/mstts" xml:lang="${settings.targetLanguage}">`;
             ssml += `<voice name="${voiceName}">`;
@@ -300,6 +317,8 @@ class SpeechSynthesisService {
 
     /**
      * 言語コードに基づいて適切な音声名を取得
+     * 注意: この関数は標準音声の場合のみ使用されます
+     * Personal Voice が設定されている場合は、言語に関係なく PERSONAL_VOICE_BASE が使用されます
      * @param {string} targetLanguage - 翻訳先言語コード（例: 'en-US', 'ja-JP'）
      * @param {string} customVoiceName - ユーザーが設定したカスタム音声名（オプション）
      * @returns {string} 音声名
