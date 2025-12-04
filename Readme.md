@@ -1,24 +1,34 @@
-# 🚀 JavaScript Application Template with GitHub Copilot
+# 🎙️ Azure Speech Service Live Interpreter
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=flat&logo=html5&logoColor=white)](https://developer.mozilla.org/docs/Web/HTML)
 [![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=flat&logo=css3&logoColor=white)](https://developer.mozilla.org/docs/Web/CSS)
 [![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat&logo=javascript&logoColor=black)](https://developer.mozilla.org/docs/Web/JavaScript)
 [![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=flat&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+[![Azure](https://img.shields.io/badge/Azure-0078D4?style=flat&logo=microsoft-azure&logoColor=white)](https://azure.microsoft.com/)
 
-> **GitHub Copilot** と **GitHub Coding Agent** を活用したモダンな JavaScript アプリケーション開発のためのテンプレートリポジトリ
+> **Azure Speech Service** のリアルタイム音声翻訳機能と **Personal Voice** を活用した、ブラウザベースの同時通訳アプリケーション
 
 ## 📋 概要
 
-このリポジトリは、AI 駆動開発ツールを使用して効率的な JavaScript アプリケーション開発を実現するための包括的なテンプレートです。最新の Web 技術スタックと開発手法を組み合わせ、迅速なプロトタイピングから本格的なアプリケーション開発まで対応します。
+このアプリケーションは、Azure Speech Service の live interpreter 機能を使用して、マイク入力された音声をリアルタイムで翻訳し、Personal Voice で音声合成して出力します。バックエンド不要で、ブラウザだけで動作する軽量な技術デモです。
 
 ### ✨ 主な特徴
 
-- 🤖 **AI ファーストな開発体験** - GitHub Copilot & Coding Agent 完全対応
+- 🎤 **リアルタイム音声認識** - マイク入力を即座にテキスト化
+- 🌐 **多言語翻訳** - 10以上の言語に対応
+- 🔊 **Personal Voice 音声合成** - カスタム音声での読み上げ
+- 💬 **チャット形式UI** - 吹き出し形式で会話を表示
+- 💾 **設定の永続化** - ローカルストレージに保存
 - ⚡ **ゼロ設定で即座に開始** - ブラウザで直接実行可能
-- 🎨 **モダンな UI/UX** - Tailwind CSS による美しいデザイン
-- 📱 **レスポンシブデザイン** - あらゆるデバイスに対応
-- 🛠️ **開発者フレンドリー** - 明確なコーディング規約とベストプラクティス
+- 📱 **レスポンシブデザイン** - モバイル・タブレット・デスクトップ対応
+
+## 🎯 ユースケース
+
+- **国際会議**: リアルタイム同時通訳
+- **語学学習**: 発音練習と翻訳確認
+- **技術デモ**: Azure Speech Service の機能紹介
+- **アクセシビリティ**: 多言語コミュニケーション支援
 
 ## 🛠️ 技術スタック
 
@@ -29,135 +39,320 @@
 | HTML5                                    | Latest     | セマンティックなマークアップ |
 | CSS3                                     | Latest     | スタイリング                 |
 | [Tailwind CSS](https://tailwindcss.com/) | 3.x (CDN)  | ユーティリティファースト CSS |
-| JavaScript                               | ES6+       | インタラクティブな機能       |
+| JavaScript                               | ES6+       | アプリケーションロジック     |
+| [Azure Speech SDK](https://docs.microsoft.com/azure/cognitive-services/speech-service/) | Latest (CDN) | 音声認識・翻訳・合成 |
 
-### 開発ツール
+### Azure Services
 
-- **GitHub Copilot** - AI ペアプログラミング
-- **GitHub Coding Agent** - 自動コード生成
-- **Visual Studio Code** - 推奨 IDE
+- **Azure Speech Service** - 音声認識と翻訳
+- **Azure Personal Voice** - カスタム音声合成
 
 ## 📁 プロジェクト構造
 
 ```
-📦 JSApp-Template-001/
-├── 📄 README.md                 # プロジェクト概要
-├── 📄 .github/
-│   └── 📄 copilot-instructions.md  # Copilot 設定
-└── 📁 src/                      # アプリケーションソース
-    ├── 📄 index.html            # メインHTML
-    ├── 📁 css/                  # スタイルシート
-    │   └── 📄 styles.css        # カスタムCSS
-    ├── 📁 js/                   # JavaScript
-    │   └── 📄 script.js         # メインスクリプト
-    └── 📁 assets/               # 静的リソース
-        └── 📁 images/           # 画像ファイル
+📦 personalvoice-translator/
+├── 📄 README.md                          # プロジェクト概要（本ファイル）
+├── 📄 LICENSE                            # MITライセンス
+├── 📁 docs/                              # ドキュメント
+│   ├── 📄 RequirementsDefinition.md     # 企画書・要件定義書
+│   └── 📄 techspec.md                    # 技術仕様書
+└── 📁 src/                               # アプリケーションソース（未実装）
+    ├── 📄 index.html                     # メインHTML
+    ├── 📁 css/                           # スタイルシート
+    │   └── 📄 styles.css                 # カスタムCSS
+    ├── 📁 js/                            # JavaScript
+    │   ├── 📄 app.js                     # エントリーポイント
+    │   ├── 📄 app-controller.js          # アプリケーションコントローラー
+    │   ├── 📄 state-manager.js           # 状態管理
+    │   ├── 📄 speech-recognition-service.js  # 音声認識サービス
+    │   ├── 📄 speech-synthesis-service.js    # 音声合成サービス
+    │   ├── 📄 storage-manager.js         # ストレージ管理
+    │   ├── 📄 ui-manager.js              # UI管理
+    │   └── 📄 constants.js               # 定数定義
+    └── 📁 assets/                        # 静的リソース
+        └── 📁 images/                    # 画像ファイル
 ```
 
 ## 🚀 クイックスタート
 
 ### 前提条件
 
-- 📌 モダンな Web ブラウザ (Chrome 90+, Firefox 88+, Safari 14+)
-- 📌 Visual Studio Code (推奨)
-- 📌 GitHub Copilot サブスクリプション
+- 📌 モダンな Web ブラウザ (Chrome 90+, Edge 90+, Firefox 88+, Safari 14+)
+- 📌 Azure サブスクリプション
+- 📌 Azure Speech Service のリソース
+- 📌 Personal Voice の設定（オプション）
 
 ### セットアップ手順
 
-#### 🤖 GitHub Coding Agent を使用する場合
+#### 1. Azure Speech Service の準備
 
-1. **リポジトリの作成**
+1. **Azure Portal にログイン**
+   - [Azure Portal](https://portal.azure.com/) にアクセス
 
-   ```bash
-   # このテンプレートから新しいリポジトリを作成
-   gh repo create my-js-app --template JSApp-Template-001
+2. **Speech Service リソースの作成**
+   ```
+   リソースの作成 > AI + Machine Learning > Speech
    ```
 
-2. **Issue の作成と Coding Agent の起動**
+3. **Subscription Key と Region を取得**
+   - リソースの「キーとエンドポイント」から確認
+   - 例: Key = `abc123...`, Region = `japaneast`
 
-   - リポジトリに新しい Issue を作成
-   - 開発要件を詳細に記述
-   - `@copilot` で Coding Agent をアサイン
+4. **Personal Voice の設定（オプション）**
+   - [Personal Voice ドキュメント](https://learn.microsoft.com/azure/ai-services/speech-service/personal-voice-overview)を参照
+   - Speaker ID を取得
 
-3. **自動開発プロセス**
-
-   - Coding Agent が要件を分析
-   - 自動的にコードを生成
-   - Pull Request として提案
-
-4. **レビューとデプロイ**
-   - 生成されたコードをレビュー
-   - main ブランチにマージ
-   - GitHub Pages でライブデモを確認
-
-#### 💻 GitHub Copilot Agent Mode (ローカル開発) を使用する場合
+#### 2. アプリケーションの起動
 
 1. **リポジトリのクローン**
-
    ```bash
-   git clone https://github.com/tokawa-ms/JSApp-Template-001.git
-   cd JSApp-Template-001
+   git clone https://github.com/yourusername/personalvoice-translator.git
+   cd personalvoice-translator
    ```
 
-2. **開発環境の準備**
-
+2. **ブラウザで開く**
    ```bash
-   # Visual Studio Code で開く
-   code .
+   # src/index.html をブラウザで開く
+   open src/index.html
+   
+   # または開発サーバーを起動
+   cd src
+   python -m http.server 8000
+   # http://localhost:8000 にアクセス
    ```
 
-3. **Copilot の設定**
+3. **初期設定**
+   - 設定アイコン（⚙️）をクリック
+   - Subscription Key、Region、Speaker ID を入力
+   - 「保存」をクリック
 
-   - VS Code で GitHub Copilot 拡張機能を有効化
-   - Agent モードに切り替え
-   - チャットウィンドウを開く
+4. **使用開始**
+   - 翻訳先言語を選択
+   - 「開始」ボタンをクリック
+   - マイク権限を許可
+   - マイクに向かって話す
+   - リアルタイムで翻訳結果が表示され、音声が再生されます
 
-4. **開発開始**
-   - 自然言語でプロンプトを入力
-   - Copilot の提案を確認・適用
-   - ブラウザで `src/index.html` を開いて動作確認
+## 📚 ドキュメント
 
-## 💡 使用例とサンプルプロンプト
+詳細なドキュメントは `docs/` ディレクトリに格納されています：
 
-### 基本的なアプリケーション作成
+- **[企画書・要件定義書](docs/RequirementsDefinition.md)** - プロジェクトの背景、目的、機能要件、UI/UX仕様
+- **[技術仕様書](docs/techspec.md)** - システムアーキテクチャ、モジュール設計、実装詳細
 
-```
-「ToDoリストアプリを作成してください。追加、削除、完了マークの機能を含めてください。」
-```
-
-### インタラクティブな機能追加
-
-```
-「現在の天気情報を表示するウィジェットを追加してください。API キーは設定画面で入力できるようにしてください。」
-```
-
-### UI/UX の改善
+### ドキュメント構成
 
 ```
-「Tailwind CSS を使用してダークモード対応のモダンなデザインに変更してください。」
+docs/
+├── RequirementsDefinition.md    # 企画書・要件定義書
+│   ├── プロジェクト概要
+│   ├── 背景と目的
+│   ├── 主要機能
+│   ├── ユーザー体験 (UX)
+│   ├── ユーザーインターフェース (UI) 仕様
+│   ├── 技術要件
+│   ├── セキュリティとプライバシー
+│   └── 今後の拡張性
+│
+└── techspec.md                   # 技術仕様書
+    ├── システムアーキテクチャ
+    ├── 技術スタック詳細
+    ├── モジュール設計
+    ├── データモデル
+    ├── API仕様
+    ├── 実装詳細
+    └── パフォーマンス最適化
+```
+
+## 💡 主要機能
+
+### 1. リアルタイム音声認識・翻訳
+- マイク入力された音声を即座に認識
+- Azure Speech Service で自動翻訳
+- 認識中の暫定結果と確定結果を表示
+
+### 2. Personal Voice による音声合成
+- カスタム Personal Voice での読み上げ
+- 自然な音声出力
+- 音量調整機能
+
+### 3. チャット形式の UI
+- 吹き出し形式で会話を表示
+- ユーザー発話と翻訳結果を区別
+- 会話履歴のスクロール表示
+
+### 4. 多言語対応
+対応言語（一部）：
+- 🇯🇵 日本語 (ja-JP)
+- 🇺🇸 英語 (en-US)
+- 🇨🇳 中国語 (zh-CN)
+- 🇰🇷 韓国語 (ko-KR)
+- 🇪🇸 スペイン語 (es-ES)
+- 🇫🇷 フランス語 (fr-FR)
+- 🇩🇪 ドイツ語 (de-DE)
+- 🇮🇹 イタリア語 (it-IT)
+
+### 5. 設定の永続化
+- ローカルストレージに設定を保存
+- 起動時に自動読み込み
+- エクスポート/インポート機能
+
+## 🎯 使用シナリオ
+
+### シナリオ 1: 国際会議での同時通訳
+```
+状況: 日本語で発言し、英語圏の参加者に翻訳を提供
+操作: 
+1. 翻訳先言語を「英語 (en-US)」に設定
+2. 「開始」ボタンをクリック
+3. 日本語で発言
+結果: 英語の翻訳がリアルタイムで表示され、音声で読み上げられる
+```
+
+### シナリオ 2: 語学学習
+```
+状況: 英語の発音練習と翻訳確認
+操作:
+1. 翻訳先言語を「日本語 (ja-JP)」に設定
+2. 英語で話す
+結果: 日本語の翻訳が表示され、正しく認識されたか確認できる
+```
+
+### シナリオ 3: 技術デモンストレーション
+```
+状況: Azure Speech Service の機能を紹介
+操作:
+1. 様々な言語で音声入力
+2. Personal Voice の音声品質を確認
+結果: Azure の強力な音声処理能力を実演
 ```
 
 ## 📱 レスポンシブデザイン対応
 
-このテンプレートは以下の画面サイズに最適化されています：
+このアプリケーションは以下の画面サイズに最適化されています：
 
 - 📱 **モバイル**: 320px〜768px
+  - 縦並びレイアウト
+  - フルワイドボタン
+  - タッチ操作に最適化
+
 - 📊 **タブレット**: 768px〜1024px
+  - 2カラムレイアウト
+  - 中サイズボタン
+  - タッチとマウス操作に対応
+
 - 💻 **デスクトップ**: 1024px 以上
+  - ワイドレイアウト
+  - 最大幅1200px
+  - マウス操作に最適化
 
-## 🔒 セキュリティとベストプラクティス
+## 🔒 セキュリティとプライバシー
 
-### API キーの取り扱い
+### データ保護
 
-- ✅ 環境変数や UI 入力フィールドを使用
-- ❌ ハードコーディングは禁止
-- 🔐 開発用のテストキーのみ使用
+- ✅ **音声データ**: Azure に直接ストリーミング、ローカル保存なし
+- ✅ **会話履歴**: ブラウザメモリ内のみ、永続化なし
+- ✅ **設定情報**: ローカルストレージに保存（技術デモのため）
+- ⚠️ **注意**: Subscription Key は他人と共有しないでください
 
-### コード品質
+### セキュリティベストプラクティス
 
-- 📋 ESLint ルールに準拠
-- 📝 適切なコメント記述
-- 🧪 エラーハンドリングの実装
+- 🔐 **HTTPS必須**: 本番環境では HTTPS でホスティング
+- 🔐 **XSS対策**: すべてのユーザー入力をエスケープ処理
+- 🔐 **CSP設定**: Content Security Policy の適用
+- 🔐 **権限管理**: マイクアクセス権限の適切な処理
+
+### プライバシーポリシー
+
+- Microsoft のプライバシーポリシーに準拠
+- 音声データは Azure Speech Service のポリシーに従って処理
+- 個人情報は収集・保存しません
+
+## 🛠️ 開発者向け情報
+
+### 技術的特徴
+
+- **バックエンドレス**: サーバー不要、フロントエンドのみ
+- **CDN依存**: すべてのライブラリを CDN から読み込み
+- **モジュール設計**: 疎結合で保守性の高いアーキテクチャ
+- **イベント駆動**: 状態管理とイベントバスによる制御
+
+### コードの特徴
+
+```javascript
+// 詳細なログ出力
+console.log('INFO: アプリケーション初期化開始');
+console.error('ERROR: 接続エラー', error);
+
+// ES6+ モダンな構文
+const { subscriptionKey, region } = config;
+const messages = state.messages ?? [];
+
+// async/await による非同期処理
+async startTranslation() {
+    await this.speechService.startRecognition();
+}
+```
+
+### 開発ワークフロー
+
+1. **計画**: ドキュメントレビュー
+2. **実装**: モジュール単位で開発
+3. **テスト**: ブラウザで動作確認
+4. **デバッグ**: コンソールログで追跡
+5. **デプロイ**: GitHub Pages 等にホスティング
+
+## 🧪 テストとデバッグ
+
+### 手動テスト
+
+```javascript
+// デバッグモードの有効化
+window.DEBUG_MODE = true;
+
+// アプリケーションインスタンスにアクセス
+console.log(window.app.stateManager.getState());
+```
+
+### テストチェックリスト
+
+- [ ] 初回起動時の設定フロー
+- [ ] 音声認識の開始と停止
+- [ ] 複数言語での翻訳
+- [ ] 音声合成の再生
+- [ ] 設定の保存と読み込み
+- [ ] エラーハンドリング
+- [ ] レスポンシブデザイン
+
+## 🚧 トラブルシューティング
+
+### よくある問題
+
+**Q: マイクが動作しない**
+```
+A: 
+1. ブラウザのマイク権限を確認
+2. HTTPS でホスティングされているか確認
+3. 他のアプリがマイクを使用していないか確認
+```
+
+**Q: 接続エラーが発生する**
+```
+A:
+1. Subscription Key が正しいか確認
+2. Region が正しいか確認（例: japaneast）
+3. ネットワーク接続を確認
+```
+
+**Q: Personal Voice が動作しない**
+```
+A:
+1. Speaker ID が正しいか確認
+2. Personal Voice が有効化されているか確認
+3. Azure Portal で権限を確認
+```
+
+詳細は [技術仕様書のトラブルシューティング](docs/techspec.md#トラブルシューティング)を参照してください。
 
 ## 🤝 コントリビューション
 
@@ -169,25 +364,67 @@
 4. ブランチにプッシュ (`git push origin feature/amazing-feature`)
 5. Pull Request を作成
 
+### コントリビューションガイドライン
+
+- コードは ES6+ で記述
+- Tailwind CSS を使用
+- 適切なコメントとログを追加
+- ドキュメントを更新
+
 ## 📄 ライセンス
 
 このプロジェクトは [MIT License](LICENSE) の下で公開されています。
 
 ## 🆘 サポートとリソース
 
-- 📖 **ドキュメント**: [GitHub Copilot Docs](https://docs.github.com/en/copilot)
-- 💬 **コミュニティ**: [GitHub Discussions](https://github.com/github/copilot-docs/discussions)
-- 🐛 **Issue 報告**: [Issues](https://github.com/tokawa-ms/JSApp-Template-001/issues)
+### 公式ドキュメント
 
-## 📊 プロジェクト統計
+- 📖 [Azure Speech Service](https://docs.microsoft.com/azure/cognitive-services/speech-service/)
+- 📖 [Speech SDK for JavaScript](https://docs.microsoft.com/azure/cognitive-services/speech-service/quickstarts/setup-platform?pivots=programming-language-javascript)
+- 📖 [Personal Voice](https://learn.microsoft.com/azure/ai-services/speech-service/personal-voice-overview)
+- 📖 [Tailwind CSS](https://tailwindcss.com/docs)
 
-![GitHub stars](https://img.shields.io/github/stars/tokawa-ms/JSApp-Template-001?style=social)
-![GitHub forks](https://img.shields.io/github/forks/tokawa-ms/JSApp-Template-001?style=social)
-![GitHub issues](https://img.shields.io/github/issues/tokawa-ms/JSApp-Template-001)
+### コミュニティ
+
+- 💬 [Azure Community](https://techcommunity.microsoft.com/t5/azure/ct-p/Azure)
+- 💬 [GitHub Discussions](https://github.com/yourusername/personalvoice-translator/discussions)
+- 🐛 [Issue 報告](https://github.com/yourusername/personalvoice-translator/issues)
+
+### 関連プロジェクト
+
+- [Azure Speech Service Samples](https://github.com/Azure-Samples/cognitive-services-speech-sdk)
+- [Speech-to-Text Demo](https://azure.microsoft.com/services/cognitive-services/speech-to-text/)
+
+## 📊 プロジェクトステータス
+
+- 📝 **ドキュメント**: ✅ 完成
+- 💻 **実装**: 🚧 未実装
+- 🧪 **テスト**: ⏳ 待機中
+- 🚀 **デプロイ**: ⏳ 待機中
+
+## 🗺️ ロードマップ
+
+### Phase 1: 基本機能実装（予定）
+- [ ] HTML/CSS/JavaScript の実装
+- [ ] Azure Speech SDK の統合
+- [ ] 基本的な音声認識と翻訳
+- [ ] チャット UI の実装
+
+### Phase 2: 機能拡張（予定）
+- [ ] Personal Voice の統合
+- [ ] 設定の永続化
+- [ ] エラーハンドリングの強化
+- [ ] レスポンシブデザインの最適化
+
+### Phase 3: 高度な機能（将来）
+- [ ] 会話履歴の保存・エクスポート
+- [ ] 複数の Personal Voice サポート
+- [ ] 言語自動検出
+- [ ] テキスト入力モード
 
 ---
 
 <div align="center">
-  <strong>🚀 Happy Coding with AI! 🤖</strong><br>
-  Made with ❤️ and GitHub Copilot
+  <strong>🎙️ リアルタイム音声翻訳の未来へ 🌐</strong><br>
+  Made with ❤️ using Azure Speech Service and GitHub Copilot
 </div>
