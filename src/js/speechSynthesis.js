@@ -12,6 +12,20 @@ class SpeechSynthesisService {
         
         // デフォルトのフォールバック音声
         this.DEFAULT_VOICE = 'en-US-JennyNeural';
+        
+        // 言語コードから音声名へのマッピング
+        this.VOICE_MAP = {
+            'ja-JP': 'ja-JP-NanamiNeural',
+            'en-US': 'en-US-JennyNeural',
+            'zh-CN': 'zh-CN-XiaoxiaoNeural',
+            'ko-KR': 'ko-KR-SunHiNeural',
+            'es-ES': 'es-ES-ElviraNeural',
+            'fr-FR': 'fr-FR-DeniseNeural',
+            'de-DE': 'de-DE-KatjaNeural',
+            'it-IT': 'it-IT-ElsaNeural',
+            'pt-BR': 'pt-BR-FranciscaNeural',
+            'ru-RU': 'ru-RU-SvetlanaNeural'
+        };
     }
 
     /**
@@ -291,32 +305,19 @@ class SpeechSynthesisService {
      * @returns {string} 音声名
      */
     getVoiceNameForLanguage(targetLanguage, customVoiceName) {
-        console.log('[SpeechSynthesis] 音声名を取得:', targetLanguage, customVoiceName);
+        console.log('[SpeechSynthesis] 音声名を取得:', targetLanguage, customVoiceName ? 'カスタム音声あり' : 'カスタム音声なし');
         
         // カスタム音声名が設定されていて、その音声名が対象言語と一致する場合は使用
         if (customVoiceName && customVoiceName.trim() !== '') {
             // 音声名が対象言語コードで始まる場合はそのまま使用
             if (customVoiceName.startsWith(targetLanguage)) {
-                console.log('[SpeechSynthesis] カスタム音声名を使用:', customVoiceName);
+                console.log('[SpeechSynthesis] カスタム音声名を使用');
                 return customVoiceName;
             }
         }
         
         // 言語コードに基づいてデフォルト音声を選択
-        const voiceMap = {
-            'ja-JP': 'ja-JP-NanamiNeural',
-            'en-US': 'en-US-JennyNeural',
-            'zh-CN': 'zh-CN-XiaoxiaoNeural',
-            'ko-KR': 'ko-KR-SunHiNeural',
-            'es-ES': 'es-ES-ElviraNeural',
-            'fr-FR': 'fr-FR-DeniseNeural',
-            'de-DE': 'de-DE-KatjaNeural',
-            'it-IT': 'it-IT-ElsaNeural',
-            'pt-BR': 'pt-BR-FranciscaNeural',
-            'ru-RU': 'ru-RU-SvetlanaNeural'
-        };
-        
-        const selectedVoice = voiceMap[targetLanguage] || this.DEFAULT_VOICE;
+        const selectedVoice = this.VOICE_MAP[targetLanguage] || this.DEFAULT_VOICE;
         console.log('[SpeechSynthesis] デフォルト音声を選択:', selectedVoice);
         return selectedVoice;
     }
