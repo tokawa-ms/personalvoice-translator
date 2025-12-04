@@ -25,7 +25,7 @@
 
 1. **Personal Voice 用ベース音声の追加**
    ```javascript
-   this.PERSONAL_VOICE_BASE = 'en-US-AvaMultilingualNeural';
+   this.PERSONAL_VOICE_BASE = 'DragonLatestNeural';
    ```
 
 2. **initialize メソッド**
@@ -48,9 +48,9 @@
 
 #### 修正後
 ```
-翻訳先: 英語 → voice: en-US-AvaMultilingualNeural + Personal Voice
-翻訳先: 日本語 → voice: en-US-AvaMultilingualNeural + Personal Voice
-翻訳先: 中国語 → voice: en-US-AvaMultilingualNeural + Personal Voice
+翻訳先: 英語 → voice: DragonLatestNeural + Personal Voice
+翻訳先: 日本語 → voice: DragonLatestNeural + Personal Voice
+翻訳先: 中国語 → voice: DragonLatestNeural + Personal Voice
 ※ すべての言語で同じ話者の声で合成される
 ```
 
@@ -91,8 +91,8 @@
 
 ### 期待される動作
 - ✅ すべての言語で同じ話者の声
-- ✅ コンソールに "Personal Voice モード - ベース音声を使用: en-US-AvaMultilingualNeural"
-- ✅ SSML に `<voice name="en-US-AvaMultilingualNeural">` が含まれる
+- ✅ コンソールに "Personal Voice モード - ベース音声を使用: DragonLatestNeural"
+- ✅ SSML に `<voice name="DragonLatestNeural">` が含まれる
 
 ---
 
@@ -105,14 +105,14 @@
 - 1つの Profile で全言語に対応可能
 
 ### 使用している技術
-- **ベース音声**: `en-US-AvaMultilingualNeural`（Multilingual Neural Voice）
+- **ベース音声**: `DragonLatestNeural`（Multilingual Neural Voice）
 - **SSML タグ**: `<mstts:ttsembedding speakerProfileId="...">`
 - **言語指定**: `xml:lang` 属性で翻訳先言語を指定
 
 ### SSML の構造（例）
 ```xml
 <speak xmlns:mstts="https://www.w3.org/2001/mstts" xml:lang="ja-JP">
-  <voice name="en-US-AvaMultilingualNeural">
+  <voice name="DragonLatestNeural">
     <mstts:ttsembedding speakerProfileId="YOUR_ID">
       こんにちは
     </mstts:ttsembedding>

@@ -17,7 +17,7 @@
 
 2. **Personal Voice 利用時の SSML の voice name が不適切**
    - Personal Voice 使用時に言語別の音声名（例: `ja-JP-NanamiNeural`, `en-US-JennyNeural`）が使用されていた
-   - 正しくは多言語対応のベース音声（例: `en-US-AvaMultilingualNeural`）を使用すべき
+   - 正しくは多言語対応のベース音声（例: `DragonLatestNeural`）を使用すべき
 
 ---
 
@@ -66,7 +66,7 @@ class SpeechSynthesisService {
         
         // Personal Voice (カスタム音声) 用のベース音声
         // Personal Voice は多言語対応のため、言語に依存しないベース音声を使用
-        this.PERSONAL_VOICE_BASE = 'en-US-AvaMultilingualNeural';
+        this.PERSONAL_VOICE_BASE = 'DragonLatestNeural';
         
         // 言語コードから音声名へのマッピング (標準音声用)
         this.VOICE_MAP = {
@@ -104,7 +104,7 @@ console.log('[SpeechSynthesis] 対象言語:', settings.targetLanguage);
 
 **修正後の動作**:
 1. Personal Voice ID が設定されている場合
-   - 常に `en-US-AvaMultilingualNeural` をベース音声として使用
+   - 常に `DragonLatestNeural` をベース音声として使用
    - 翻訳先言語が何であっても、同じベース音声を使用
    - Speaker Profile ID の話者特性がベース音声に適用される
    - その人の声で多言語を話すことができる
@@ -219,7 +219,7 @@ generateSSML(text, settings) {
        xmlns="http://www.w3.org/2001/10/synthesis" 
        xmlns:mstts="https://www.w3.org/2001/mstts" 
        xml:lang="ja-JP">
-  <voice name="en-US-AvaMultilingualNeural">
+  <voice name="DragonLatestNeural">
     <mstts:ttsembedding speakerProfileId="YOUR_SPEAKER_ID">
       こんにちは
     </mstts:ttsembedding>
@@ -229,7 +229,7 @@ generateSSML(text, settings) {
 
 **重要なポイント**:
 - `xml:lang` 属性は翻訳先言語を指定 (`ja-JP`, `en-US`, など)
-- `<voice name="...">` はベース音声を指定 (`en-US-AvaMultilingualNeural`)
+- `<voice name="...">` はベース音声を指定 (`DragonLatestNeural`)
 - `speakerProfileId` で話者特性を適用
 - この組み合わせにより、指定した人の声で翻訳先言語を話すことができる
 
@@ -260,10 +260,10 @@ generateSSML(text, settings) {
 - Personal Voice の話者特性が反映された声で英語が読み上げられる
 - ブラウザのコンソールに以下のログが表示される:
   ```
-  [SpeechSynthesis] Personal Voice モード - ベース音声を使用: en-US-AvaMultilingualNeural
+  [SpeechSynthesis] Personal Voice モード - ベース音声を使用: DragonLatestNeural
   [SpeechSynthesis] Personal Voice ID: YOUR_SPEAKER_ID
   [SpeechSynthesis] Personal Voice は多言語対応のため、言語に依存しません
-  [SpeechSynthesis] Personal Voice 用 SSML - ベース音声: en-US-AvaMultilingualNeural
+  [SpeechSynthesis] Personal Voice 用 SSML - ベース音声: DragonLatestNeural
   ```
 
 **手順** (続き):
@@ -276,7 +276,7 @@ generateSSML(text, settings) {
 - 異なる言語でも、同じ人の声で話しているように聞こえる
 - ブラウザのコンソールに以下のログが表示される:
   ```
-  [SpeechSynthesis] Personal Voice モード - ベース音声を使用: en-US-AvaMultilingualNeural
+  [SpeechSynthesis] Personal Voice モード - ベース音声を使用: DragonLatestNeural
   [SpeechSynthesis] 対象言語: zh-CN
   ```
 
@@ -323,25 +323,22 @@ generateSSML(text, settings) {
 
 **使用方法**:
 1. ベース音声として多言語対応の Neural Voice を指定
-   - 例: `en-US-AvaMultilingualNeural`, `en-US-AndrewMultilingualNeural`
+   - 例: `DragonLatestNeural`, `en-US-AndrewMultilingualNeural`
 2. SSML で `mstts:ttsembedding` タグを使用
 3. `speakerProfileId` 属性に Speaker Profile ID を指定
 4. `xml:lang` で合成したい言語を指定
 
 ### 選択したベース音声について
 
-**`en-US-AvaMultilingualNeural` を選択した理由**:
-- Azure が提供する多言語対応の Neural Voice
-- Personal Voice の `ttsembedding` 機能をサポート
-- 高品質な音声出力
-- 多数の言語に対応
+**`DragonLatestNeural` を選択した理由**:
+- Azure が Personal Voice 用に推奨する最新のベース音声
+- Personal Voice の `ttsembedding` 機能に最適化
+- 多言語対応で高品質な音声出力
+- Personal Voice の話者特性を最も自然に反映
 
 **代替案**:
-- `en-US-AndrewMultilingualNeural` (男性音声)
-- `zh-CN-XiaoyiMultilingualNeural` (中国語ベース)
-- その他の Multilingual Neural Voice
-
-ユーザーが異なるベース音声を使用したい場合は、設定画面でカスタム音声名を指定することで変更可能です。
+- その他の Multilingual Neural Voice も使用可能
+- ユーザーが異なるベース音声を使用したい場合は、設定画面でカスタム音声名を指定することで変更可能
 
 ### コードの変更点まとめ
 
@@ -376,7 +373,7 @@ generateSSML(text, settings) {
 **Personal Voice を使用しているユーザー**:
 - ✅ **改善**: 翻訳先言語を変更しても、同じ人の声で話すようになる
 - ✅ **改善**: より自然な多言語音声合成が可能になる
-- ⚠️ **変更**: ベース音声が `en-US-AvaMultilingualNeural` に変更される
+- ⚠️ **変更**: ベース音声が `DragonLatestNeural` に変更される
   - 異なるベース音声を使用したい場合は、設定画面でカスタム音声名を指定可能
 
 **Personal Voice を使用していないユーザー**:
@@ -389,7 +386,7 @@ generateSSML(text, settings) {
 
 ### 1. ベース音声の選択オプション
 
-現在は `en-US-AvaMultilingualNeural` を固定で使用していますが、以下の改善を検討:
+現在は `DragonLatestNeural` を固定で使用していますが、以下の改善を検討:
 - 設定画面でベース音声を選択可能にする
 - 男性/女性の選択
 - 言語圏に応じたベース音声の提案
