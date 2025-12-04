@@ -15,7 +15,8 @@ class SpeechSynthesisService {
         
         // Personal Voice (カスタム音声) 用のベース音声
         // Personal Voice は多言語対応のため、言語に依存しないベース音声を使用
-        this.PERSONAL_VOICE_BASE = 'en-US-AvaMultilingualNeural';
+        // DragonLatestNeural が Personal Voice の推奨ベース音声
+        this.PERSONAL_VOICE_BASE = 'DragonLatestNeural';
         
         // 言語コードから音声名へのマッピング
         this.VOICE_MAP = {
