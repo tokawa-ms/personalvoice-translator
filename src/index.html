@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Voice Translator - リアルタイム音声翻訳</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Azure Speech SDK CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/microsoft-cognitiveservices-speech-sdk@latest/distrib/browser/microsoft.cognitiveservices.speech.sdk.bundle-min.js"></script>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
+    
+    <!-- Header -->
+    <header class="bg-white shadow-md">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <svg class="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path>
+                    </svg>
+                    <h1 class="text-2xl font-bold text-gray-800">Personal Voice Translator</h1>
+                </div>
+                <button id="settingsBtn" class="p-2 rounded-lg hover:bg-gray-100 transition-colors" title="設定">
+                    <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="container mx-auto px-4 py-6 max-w-6xl">
+        
+        <!-- Control Panel -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <!-- Target Language Selection -->
+                <div>
+                    <label for="targetLanguage" class="block text-sm font-medium text-gray-700 mb-2">
+                        翻訳先言語
+                    </label>
+                    <select id="targetLanguage" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                        <option value="ja-JP">日本語 (ja-JP)</option>
+                        <option value="en-US">英語 (en-US)</option>
+                        <option value="zh-CN">中国語 (zh-CN)</option>
+                        <option value="ko-KR">韓国語 (ko-KR)</option>
+                        <option value="es-ES">スペイン語 (es-ES)</option>
+                        <option value="fr-FR">フランス語 (fr-FR)</option>
+                        <option value="de-DE">ドイツ語 (de-DE)</option>
+                        <option value="it-IT">イタリア語 (it-IT)</option>
+                        <option value="pt-BR">ポルトガル語 (pt-BR)</option>
+                        <option value="ru-RU">ロシア語 (ru-RU)</option>
+                    </select>
+                </div>
+
+                <!-- Status Display -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        ステータス
+                    </label>
+                    <div id="statusDisplay" class="flex items-center px-4 py-2 bg-gray-100 rounded-lg">
+                        <div id="statusIndicator" class="w-3 h-3 rounded-full bg-gray-400 mr-2"></div>
+                        <span id="statusText" class="text-sm text-gray-600">準備中...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Start/Stop Button -->
+            <div class="flex justify-center">
+                <button id="startStopBtn" 
+                        class="px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg shadow-md transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                        disabled>
+                    <span id="btnText">翻訳を開始</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Chat Display Area -->
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+            <div class="bg-indigo-600 px-6 py-3">
+                <h2 class="text-white font-semibold">翻訳履歴</h2>
+            </div>
+            <div id="chatContainer" class="h-96 overflow-y-auto p-6 space-y-4 bg-gray-50">
+                <!-- Welcome Message -->
+                <div class="text-center text-gray-500 py-8">
+                    <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
+                    </svg>
+                    <p class="text-lg">設定を完了して翻訳を開始してください</p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-lg shadow-2xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="bg-indigo-600 px-6 py-4 flex justify-between items-center sticky top-0">
+                <h2 class="text-xl font-bold text-white">設定</h2>
+                <button id="closeSettingsBtn" class="text-white hover:text-gray-200 transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="p-6 space-y-6">
+                <!-- Azure Speech Service Settings -->
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Azure Speech Service 設定</h3>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label for="subscriptionKey" class="block text-sm font-medium text-gray-700 mb-2">
+                                サブスクリプションキー *
+                            </label>
+                            <input type="password" id="subscriptionKey" 
+                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                                   placeholder="Azure Speech Service のサブスクリプションキーを入力">
+                            <p class="mt-1 text-xs text-gray-500">Azure ポータルの Speech Service リソースから取得</p>
+                        </div>
+
+                        <div>
+                            <label for="serviceRegion" class="block text-sm font-medium text-gray-700 mb-2">
+                                リージョン *
+                            </label>
+                            <input type="text" id="serviceRegion" 
+                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                                   placeholder="例: japaneast, eastus">
+                            <p class="mt-1 text-xs text-gray-500">Speech Service リソースのリージョン</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Personal Voice Settings -->
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Personal Voice 設定</h3>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label for="personalVoiceId" class="block text-sm font-medium text-gray-700 mb-2">
+                                Personal Voice ID (オプション)
+                            </label>
+                            <input type="text" id="personalVoiceId" 
+                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                                   placeholder="Personal Voice の ID を入力">
+                            <p class="mt-1 text-xs text-gray-500">未設定の場合は標準の音声が使用されます</p>
+                        </div>
+
+                        <div>
+                            <label for="voiceName" class="block text-sm font-medium text-gray-700 mb-2">
+                                音声名
+                            </label>
+                            <input type="text" id="voiceName" 
+                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                                   placeholder="例: ja-JP-NanamiNeural"
+                                   value="ja-JP-NanamiNeural">
+                            <p class="mt-1 text-xs text-gray-500">使用する音声の名前（Personal Voice 未使用時）</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Source Language Settings -->
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">音声認識設定</h3>
+                    
+                    <div>
+                        <label for="sourceLanguage" class="block text-sm font-medium text-gray-700 mb-2">
+                            認識元言語
+                        </label>
+                        <select id="sourceLanguage" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                            <option value="ja-JP">日本語 (ja-JP)</option>
+                            <option value="en-US">英語 (en-US)</option>
+                            <option value="zh-CN">中国語 (zh-CN)</option>
+                            <option value="ko-KR">韓国語 (ko-KR)</option>
+                            <option value="es-ES">スペイン語 (es-ES)</option>
+                            <option value="fr-FR">フランス語 (fr-FR)</option>
+                            <option value="de-DE">ドイツ語 (de-DE)</option>
+                            <option value="it-IT">イタリア語 (it-IT)</option>
+                            <option value="pt-BR">ポルトガル語 (pt-BR)</option>
+                            <option value="ru-RU">ロシア語 (ru-RU)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex space-x-4 pt-4 border-t border-gray-200">
+                    <button id="saveSettingsBtn" 
+                            class="flex-1 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg shadow-md transition-colors">
+                        保存
+                    </button>
+                    <button id="clearSettingsBtn" 
+                            class="px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg shadow-md transition-colors">
+                        クリア
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-40">
+        <div class="bg-white rounded-lg p-8 flex flex-col items-center">
+            <div class="animate-spin rounded-full h-16 w-16 border-b-4 border-indigo-600 mb-4"></div>
+            <p class="text-gray-700 font-semibold">処理中...</p>
+        </div>
+    </div>
+
+    <!-- JavaScript Modules -->
+    <script src="js/storageManager.js"></script>
+    <script src="js/stateManager.js"></script>
+    <script src="js/uiManager.js"></script>
+    <script src="js/speechRecognition.js"></script>
+    <script src="js/speechSynthesis.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
