@@ -302,13 +302,13 @@ class AppController {
     /**
      * リソースをクリーンアップ
      */
-    cleanup() {
+    async cleanup() {
         console.log('[AppController] クリーンアップ開始');
         
         try {
-            // 翻訳中なら停止
+            // 翻訳中なら停止（完了を待つ）
             if (this.isTranslating) {
-                this.stopTranslation().catch(e => {
+                await this.stopTranslation().catch(e => {
                     console.warn('[AppController] 停止エラー:', e);
                 });
             }
@@ -359,10 +359,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 // ページ終了時にクリーンアップ
-window.addEventListener('beforeunload', () => {
+window.addEventListener('beforeunload', async (event) => {
     console.log('[App] ページ終了 - クリーンアップ');
     if (window.appController) {
-        window.appController.cleanup();
+        await window.appController.cleanup();
     }
 });
 

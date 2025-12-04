@@ -11,6 +11,21 @@ class SpeechRecognitionService {
     }
 
     /**
+     * 言語コードからターゲット言語コードを抽出
+     * @param {string} languageCode - 完全な言語コード（例: 'en-US'）
+     * @returns {string} ターゲット言語コード（例: 'en'）
+     */
+    extractTargetLanguage(languageCode) {
+        if (!languageCode || typeof languageCode !== 'string') {
+            console.warn('[SpeechRecognition] 無効な言語コード:', languageCode);
+            return 'en'; // デフォルト
+        }
+        
+        const parts = languageCode.split('-');
+        return parts[0];
+    }
+
+    /**
      * 音声認識を初期化
      * @param {Object} settings - 設定オブジェクト
      * @returns {Promise<boolean>} 初期化成功時 true
@@ -41,7 +56,7 @@ class SpeechRecognitionService {
             console.log('[SpeechRecognition] 認識元言語:', settings.sourceLanguage);
 
             // 翻訳先言語を設定
-            const targetLang = settings.targetLanguage.split('-')[0]; // 'en-US' -> 'en'
+            const targetLang = this.extractTargetLanguage(settings.targetLanguage);
             speechConfig.addTargetLanguage(targetLang);
             console.log('[SpeechRecognition] 翻訳先言語:', targetLang);
 

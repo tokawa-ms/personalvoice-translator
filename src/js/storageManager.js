@@ -15,7 +15,7 @@ class StorageManager {
      */
     saveSettings(settings) {
         try {
-            console.log('[StorageManager] 設定を保存:', { ...settings, subscriptionKey: '***' });
+            console.log('[StorageManager] 設定を保存中...');
             const data = JSON.stringify(settings);
             localStorage.setItem(this.STORAGE_KEY, data);
             console.log('[StorageManager] 保存成功');
@@ -41,7 +41,7 @@ class StorageManager {
             }
             
             const settings = JSON.parse(data);
-            console.log('[StorageManager] 読み込み成功:', { ...settings, subscriptionKey: '***' });
+            console.log('[StorageManager] 読み込み成功');
             return settings;
         } catch (error) {
             console.error('[StorageManager] 読み込み失敗:', error);
