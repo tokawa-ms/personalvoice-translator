@@ -97,14 +97,22 @@ class AppController {
                 window.storageManager.updateSetting('targetLanguage', e.target.value);
                 window.stateManager.updateSettings(settings);
                 
-                // 音声合成サービスを再初期化して、新しい言語の音声を使用
+                // 翻訳先言語を変更するには、音声認識サービスと音声合成サービスの両方を再初期化する必要がある
+                // - 音声認識サービス: TranslationRecognizer の翻訳先言語を更新
+                // - 音声合成サービス: 新しい言語の音声を使用
                 if (window.stateManager.getState('isConnected')) {
-                    console.log('[AppController] 翻訳先言語変更により音声合成サービスを再初期化');
+                    console.log('[AppController] 翻訳先言語変更により音声認識・合成サービスを再初期化');
                     try {
+                        // 音声認識サービスを再初期化（翻訳先言語を更新）
+                        await window.speechRecognitionService.initialize(settings);
+                        console.log('[AppController] 音声認識サービス再初期化完了');
+                        
+                        // 音声合成サービスを再初期化（新しい言語の音声を使用）
                         await window.speechSynthesisService.initialize(settings);
                         console.log('[AppController] 音声合成サービス再初期化完了');
                     } catch (error) {
-                        console.error('[AppController] 音声合成サービス再初期化エラー:', error);
+                        console.error('[AppController] サービス再初期化エラー:', error);
+                        window.uiManager.showAlert(`サービス再初期化エラー: ${error.message}`, 'error');
                     }
                 }
             }
