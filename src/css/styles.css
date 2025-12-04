@@ -1,0 +1,230 @@
+/* カスタムスタイル */
+
+/* スムーズスクロール */
+html {
+    scroll-behavior: smooth;
+}
+
+/* チャットコンテナのカスタムスクロールバー */
+#chatContainer::-webkit-scrollbar {
+    width: 8px;
+}
+
+#chatContainer::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+#chatContainer::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+}
+
+#chatContainer::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* チャットバブルのアニメーション */
+.chat-bubble {
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 原文の吹き出し（左側・青系） */
+.message-original {
+    max-width: 80%;
+    margin-right: auto;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 1rem 1.25rem;
+    border-radius: 1.25rem;
+    border-top-left-radius: 0.25rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* 翻訳文の吹き出し（右側・緑系） */
+.message-translated {
+    max-width: 80%;
+    margin-left: auto;
+    background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+    color: white;
+    padding: 1rem 1.25rem;
+    border-radius: 1.25rem;
+    border-top-right-radius: 0.25rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* システムメッセージ */
+.message-system {
+    text-align: center;
+    color: #6b7280;
+    font-size: 0.875rem;
+    padding: 0.5rem;
+    font-style: italic;
+}
+
+/* エラーメッセージ */
+.message-error {
+    max-width: 80%;
+    margin: 0 auto;
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+    color: white;
+    padding: 1rem 1.25rem;
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    text-align: center;
+}
+
+/* タイムスタンプ */
+.timestamp {
+    font-size: 0.75rem;
+    opacity: 0.8;
+    margin-top: 0.25rem;
+}
+
+/* 言語ラベル */
+.language-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    opacity: 0.9;
+    margin-bottom: 0.25rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* モーダルのフェードインアニメーション */
+#settingsModal.show {
+    display: flex !important;
+    animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* ローディングオーバーレイ */
+#loadingOverlay.show {
+    display: flex !important;
+    animation: fadeIn 0.2s ease-out;
+}
+
+/* ステータスインジケーターのアニメーション */
+.status-active {
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+/* ボタンのリップルエフェクト */
+button {
+    position: relative;
+    overflow: hidden;
+}
+
+button::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+button:active::after {
+    width: 300px;
+    height: 300px;
+}
+
+/* レスポンシブ調整 */
+@media (max-width: 768px) {
+    .message-original,
+    .message-translated {
+        max-width: 90%;
+    }
+    
+    #settingsModal > div {
+        max-width: 95%;
+        margin: 1rem;
+    }
+}
+
+/* アクセシビリティ: フォーカス表示の強化 */
+button:focus,
+input:focus,
+select:focus {
+    outline: 2px solid #818cf8;
+    outline-offset: 2px;
+}
+
+/* 音声合成中のインジケーター */
+.synthesizing {
+    position: relative;
+}
+
+.synthesizing::after {
+    content: '';
+    position: absolute;
+    right: -10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #fbbf24;
+    animation: blink 1s ease-in-out infinite;
+}
+
+@keyframes blink {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0;
+    }
+}
+
+/* スクロールのスナップ動作（オプション） */
+#chatContainer {
+    scroll-snap-type: y proximity;
+}
+
+.chat-bubble {
+    scroll-snap-align: start;
+}
+
+/* テキスト選択のカスタマイズ */
+::selection {
+    background-color: #818cf8;
+    color: white;
+}
+
+/* ダークモード対応（将来の拡張用） */
+@media (prefers-color-scheme: dark) {
+    /* ダークモードのスタイルはここに追加 */
+}
