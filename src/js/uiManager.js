@@ -13,6 +13,7 @@ class UIManager {
             targetLanguage: document.getElementById('targetLanguage'),
             startStopBtn: document.getElementById('startStopBtn'),
             btnText: document.getElementById('btnText'),
+            clearHistoryBtn: document.getElementById('clearHistoryBtn'),
             statusDisplay: document.getElementById('statusDisplay'),
             statusIndicator: document.getElementById('statusIndicator'),
             statusText: document.getElementById('statusText'),
