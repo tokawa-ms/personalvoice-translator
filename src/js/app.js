@@ -9,6 +9,7 @@ class AppController {
         
         this.initialized = false;
         this.isTranslating = false;
+        this.isReinitializing = false;
         
         console.log('[AppController] コンストラクタ完了');
     }
@@ -91,20 +92,48 @@ class AppController {
         // 翻訳先言語の変更
         window.uiManager.elements.targetLanguage.addEventListener('change', async (e) => {
             console.log('[AppController] 翻訳先言語変更:', e.target.value);
+            
+            // 再初期化中の場合は処理をスキップ
+            if (this.isReinitializing) {
+                console.warn('[AppController] 再初期化中のため、言語変更をスキップします');
+                return;
+            }
+            
             const settings = window.stateManager.getState('settings');
             if (settings) {
                 settings.targetLanguage = e.target.value;
                 window.storageManager.updateSetting('targetLanguage', e.target.value);
                 window.stateManager.updateSettings(settings);
                 
-                // 音声合成サービスを再初期化して、新しい言語の音声を使用
+                // 翻訳先言語を変更するには、音声認識サービスと音声合成サービスの両方を再初期化する必要がある
+                // - 音声認識サービス: TranslationRecognizer の翻訳先言語を更新
+                // - 音声合成サービス: 新しい言語の音声を使用
                 if (window.stateManager.getState('isConnected')) {
-                    console.log('[AppController] 翻訳先言語変更により音声合成サービスを再初期化');
+                    console.log('[AppController] 翻訳先言語変更により音声認識・合成サービスを再初期化');
+                    
+                    this.isReinitializing = true;
+                    window.uiManager.elements.targetLanguage.disabled = true;
+                    
                     try {
+                        // 翻訳中の場合は、まず停止してから再初期化
+                        if (this.isTranslating) {
+                            console.log('[AppController] 翻訳中のため、先に停止します');
+                            await this.stopTranslation();
+                        }
+                        
+                        // 音声認識サービスを再初期化（翻訳先言語を更新）
+                        await window.speechRecognitionService.initialize(settings);
+                        console.log('[AppController] 音声認識サービス再初期化完了');
+                        
+                        // 音声合成サービスを再初期化（新しい言語の音声を使用）
                         await window.speechSynthesisService.initialize(settings);
                         console.log('[AppController] 音声合成サービス再初期化完了');
                     } catch (error) {
-                        console.error('[AppController] 音声合成サービス再初期化エラー:', error);
+                        // エラーハンドリングは専用メソッドで実行
+                        this.handleReinitializationError(error);
+                    } finally {
+                        this.isReinitializing = false;
+                        window.uiManager.elements.targetLanguage.disabled = false;
                     }
                 }
             }
@@ -323,6 +352,45 @@ class AppController {
         } catch (error) {
             console.error('[AppController] クリーンアップエラー:', error);
         }
+    }
+
+    /**
+     * サービス再初期化エラーを処理
+     * @param {Error} error - エラーオブジェクト
+     */
+    handleReinitializationError(error) {
+        console.error('[AppController] サービス再初期化エラー:', error);
+        
+        // 再初期化フラグをリセット（finally ブロックに到達しない場合に備えて）
+        this.isReinitializing = false;
+        
+        // エラー発生時は両方のサービスをクリーンアップして、接続状態をリセット
+        // 各クリーンアップ操作は独立して実行し、エラーが発生しても続行する
+        try {
+            window.speechRecognitionService.cleanup();
+        } catch (cleanupError) {
+            console.error('[AppController] 音声認識サービスのクリーンアップエラー:', cleanupError);
+        }
+        
+        try {
+            window.speechSynthesisService.cleanup();
+        } catch (cleanupError) {
+            console.error('[AppController] 音声合成サービスのクリーンアップエラー:', cleanupError);
+        }
+        
+        // 状態をリセット
+        this.isTranslating = false;
+        window.stateManager.setConnected(false);
+        
+        // UIを更新
+        window.uiManager.updateStatus('再初期化エラー', 'red');
+        window.uiManager.updateButton(false, false);
+        
+        // ユーザーにエラーを通知
+        window.uiManager.showAlert(
+            `サービス再初期化エラー: ${error.message}\n設定を確認して再度保存してください。`,
+            'error'
+        );
     }
 
     /**
