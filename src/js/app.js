@@ -103,6 +103,12 @@ class AppController {
                 if (window.stateManager.getState('isConnected')) {
                     console.log('[AppController] 翻訳先言語変更により音声認識・合成サービスを再初期化');
                     try {
+                        // 翻訳中の場合は、まず停止してから再初期化
+                        if (this.isTranslating) {
+                            console.log('[AppController] 翻訳中のため、先に停止します');
+                            await this.stopTranslation();
+                        }
+                        
                         // 音声認識サービスを再初期化（翻訳先言語を更新）
                         await window.speechRecognitionService.initialize(settings);
                         console.log('[AppController] 音声認識サービス再初期化完了');
@@ -114,8 +120,20 @@ class AppController {
                         console.error('[AppController] サービス再初期化エラー:', error);
                         
                         // エラー発生時は両方のサービスをクリーンアップして、接続状態をリセット
-                        window.speechRecognitionService.cleanup();
-                        window.speechSynthesisService.cleanup();
+                        // 各クリーンアップ操作は独立して実行し、エラーが発生しても続行する
+                        try {
+                            window.speechRecognitionService.cleanup();
+                        } catch (cleanupError) {
+                            console.error('[AppController] 音声認識サービスのクリーンアップエラー:', cleanupError);
+                        }
+                        
+                        try {
+                            window.speechSynthesisService.cleanup();
+                        } catch (cleanupError) {
+                            console.error('[AppController] 音声合成サービスのクリーンアップエラー:', cleanupError);
+                        }
+                        
+                        this.isTranslating = false;
                         window.stateManager.setConnected(false);
                         window.uiManager.updateStatus('再初期化エラー', 'red');
                         window.uiManager.updateButton(false, false);
