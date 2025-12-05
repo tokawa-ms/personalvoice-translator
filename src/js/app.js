@@ -361,6 +361,9 @@ class AppController {
     handleReinitializationError(error) {
         console.error('[AppController] サービス再初期化エラー:', error);
         
+        // 再初期化フラグをリセット（finally ブロックに到達しない場合に備えて）
+        this.isReinitializing = false;
+        
         // エラー発生時は両方のサービスをクリーンアップして、接続状態をリセット
         // 各クリーンアップ操作は独立して実行し、エラーが発生しても続行する
         try {
