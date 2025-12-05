@@ -89,6 +89,12 @@ class AppController {
             await this.toggleTranslation();
         });
         
+        // 履歴削除ボタン
+        window.uiManager.elements.clearHistoryBtn.addEventListener('click', () => {
+            console.log('[AppController] 履歴削除ボタンクリック');
+            this.clearHistory();
+        });
+        
         // 翻訳先言語の変更
         window.uiManager.elements.targetLanguage.addEventListener('change', async (e) => {
             console.log('[AppController] 翻訳先言語変更:', e.target.value);
@@ -326,6 +332,21 @@ class AppController {
         } catch (error) {
             console.error('[AppController] 翻訳停止エラー:', error);
             throw error;
+        }
+    }
+
+    /**
+     * 翻訳履歴をクリア
+     */
+    clearHistory() {
+        console.log('[AppController] 翻訳履歴をクリア');
+        
+        const confirmed = window.uiManager.showConfirm('翻訳履歴を削除してもよろしいですか?');
+        
+        if (confirmed) {
+            window.uiManager.clearChat();
+            window.uiManager.showAlert('翻訳履歴を削除しました。', 'info');
+            console.log('[AppController] 翻訳履歴クリア完了');
         }
     }
 
