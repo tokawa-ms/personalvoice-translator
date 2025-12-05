@@ -9,6 +9,7 @@ class AppController {
         
         this.initialized = false;
         this.isTranslating = false;
+        this.isReinitializing = false;
         
         console.log('[AppController] コンストラクタ完了');
     }
@@ -19,9 +20,6 @@ class AppController {
     async init() {
         try {
             console.log('[AppController] アプリケーション初期化');
-            
-            // 再初期化中フラグを初期化
-            this.isReinitializing = false;
             
             // イベントリスナーを設定
             this.setupEventListeners();
@@ -131,7 +129,7 @@ class AppController {
                         await window.speechSynthesisService.initialize(settings);
                         console.log('[AppController] 音声合成サービス再初期化完了');
                     } catch (error) {
-                        console.error('[AppController] サービス再初期化エラー:', error);
+                        // エラーハンドリングは専用メソッドで実行
                         this.handleReinitializationError(error);
                     } finally {
                         this.isReinitializing = false;
