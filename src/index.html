@@ -41,7 +41,26 @@
         
         <!-- Control Panel -->
         <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                <!-- Source Language Selection -->
+                <div>
+                    <label for="sourceLanguageMain" class="block text-sm font-medium text-gray-700 mb-2">
+                        翻訳元言語
+                    </label>
+                    <select id="sourceLanguageMain" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                        <option value="ja-JP">日本語 (ja-JP)</option>
+                        <option value="en-US">英語 (en-US)</option>
+                        <option value="zh-CN">中国語 (zh-CN)</option>
+                        <option value="ko-KR">韓国語 (ko-KR)</option>
+                        <option value="es-ES">スペイン語 (es-ES)</option>
+                        <option value="fr-FR">フランス語 (fr-FR)</option>
+                        <option value="de-DE">ドイツ語 (de-DE)</option>
+                        <option value="it-IT">イタリア語 (it-IT)</option>
+                        <option value="pt-BR">ポルトガル語 (pt-BR)</option>
+                        <option value="ru-RU">ロシア語 (ru-RU)</option>
+                    </select>
+                </div>
+
                 <!-- Target Language Selection -->
                 <div>
                     <label for="targetLanguage" class="block text-sm font-medium text-gray-700 mb-2">
