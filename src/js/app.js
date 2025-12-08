@@ -84,6 +84,12 @@ class AppController {
             this.clearSettings();
         });
         
+        // 設定モーダルの翻訳元言語の変更（メインドロップダウンと同期）
+        window.uiManager.elements.sourceLanguage.addEventListener('change', (e) => {
+            console.log('[AppController] 設定モーダルの翻訳元言語変更:', e.target.value);
+            window.uiManager.elements.sourceLanguageMain.value = e.target.value;
+        });
+        
         // 開始/停止ボタン
         window.uiManager.elements.startStopBtn.addEventListener('click', async () => {
             await this.toggleTranslation();
@@ -140,6 +146,53 @@ class AppController {
                     } finally {
                         this.isReinitializing = false;
                         window.uiManager.elements.targetLanguage.disabled = false;
+                    }
+                }
+            }
+        });
+        
+        // 翻訳元言語の変更
+        window.uiManager.elements.sourceLanguageMain.addEventListener('change', async (e) => {
+            console.log('[AppController] 翻訳元言語変更:', e.target.value);
+            
+            // 再初期化中の場合は処理をスキップ
+            if (this.isReinitializing) {
+                console.warn('[AppController] 再初期化中のため、言語変更をスキップします');
+                return;
+            }
+            
+            const settings = window.stateManager.getState('settings');
+            if (settings) {
+                settings.sourceLanguage = e.target.value;
+                window.storageManager.updateSetting('sourceLanguage', e.target.value);
+                window.stateManager.updateSettings(settings);
+                
+                // 設定モーダルのドロップダウンも同期
+                window.uiManager.elements.sourceLanguage.value = e.target.value;
+                
+                // 翻訳元言語を変更するには、音声認識サービスを再初期化する必要がある
+                if (window.stateManager.getState('isConnected')) {
+                    console.log('[AppController] 翻訳元言語変更により音声認識サービスを再初期化');
+                    
+                    this.isReinitializing = true;
+                    window.uiManager.elements.sourceLanguageMain.disabled = true;
+                    
+                    try {
+                        // 翻訳中の場合は、まず停止してから再初期化
+                        if (this.isTranslating) {
+                            console.log('[AppController] 翻訳中のため、先に停止します');
+                            await this.stopTranslation();
+                        }
+                        
+                        // 音声認識サービスを再初期化（翻訳元言語を更新）
+                        await window.speechRecognitionService.initialize(settings);
+                        console.log('[AppController] 音声認識サービス再初期化完了');
+                    } catch (error) {
+                        // エラーハンドリングは専用メソッドで実行
+                        this.handleReinitializationError(error);
+                    } finally {
+                        this.isReinitializing = false;
+                        window.uiManager.elements.sourceLanguageMain.disabled = false;
                     }
                 }
             }
