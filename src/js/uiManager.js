@@ -10,6 +10,7 @@ class UIManager {
         // DOM要素の参照
         this.elements = {
             // コントロール
+            sourceLanguageMain: document.getElementById('sourceLanguageMain'),
             targetLanguage: document.getElementById('targetLanguage'),
             startStopBtn: document.getElementById('startStopBtn'),
             btnText: document.getElementById('btnText'),
@@ -198,7 +199,10 @@ class UIManager {
         if (settings.serviceRegion) this.elements.serviceRegion.value = settings.serviceRegion;
         if (settings.personalVoiceId) this.elements.personalVoiceId.value = settings.personalVoiceId;
         if (settings.voiceName) this.elements.voiceName.value = settings.voiceName;
-        if (settings.sourceLanguage) this.elements.sourceLanguage.value = settings.sourceLanguage;
+        if (settings.sourceLanguage) {
+            this.elements.sourceLanguage.value = settings.sourceLanguage;
+            this.elements.sourceLanguageMain.value = settings.sourceLanguage;
+        }
         if (settings.targetLanguage) this.elements.targetLanguage.value = settings.targetLanguage;
     }
 
@@ -230,6 +234,7 @@ class UIManager {
         this.elements.personalVoiceId.value = '';
         this.elements.voiceName.value = 'ja-JP-NanamiNeural';
         this.elements.sourceLanguage.value = 'ja-JP';
+        this.elements.sourceLanguageMain.value = 'ja-JP';
         this.elements.targetLanguage.value = 'en-US';
     }
 
